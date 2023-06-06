@@ -1,0 +1,794 @@
+openapi: 3.0.0
+info:
+  title: Kerjamin
+  contact: {}
+  version: "1.0"
+servers:
+- url: https://kerjamin-api-ko6izzknpq-et.a.run.app/api
+tags:
+- name: Auth
+- name: Client
+- name: Freelancer
+paths:
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Login Client
+      operationId: LoginClient
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginClientRequest'
+            example:
+              email: hasanah.rini@gmail.co.id
+              password: password
+              role: client
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      x-swagger-router-controller: Auth
+  /auth/sign-up/client:
+    post:
+      tags:
+      - Auth
+      summary: Sign-Up Client
+      operationId: Sign-UpClient
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sign-UpClientRequest'
+            example:
+              nik: "123456789"
+              nama: Kerjamin-user
+              alamat: "Jalan kemana saja, Indonesia"
+              jenis_kelamin: Pria
+              no_wa: "0123456789"
+              email: emailBelumAda@gmail.com
+              password: password
+              role: CL
+              latitude: "3.1549872"
+              longitude: "-5.1248"
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      x-swagger-router-controller: Auth
+  /client/me:
+    get:
+      tags:
+      - Client
+      summary: Client Self Data
+      operationId: ClientSelfData
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/search/freelance/{job_id}:
+    get:
+      tags:
+      - Client
+      summary: Freelancer Data
+      operationId: FreelancerData
+      parameters:
+      - name: job_id
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/payment/method:
+    get:
+      tags:
+      - Client
+      summary: Payment Method
+      operationId: PaymentMethod
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/orders/{id_order}:
+    get:
+      tags:
+      - Client
+      summary: Details Orders
+      operationId: DetailsOrders
+      parameters:
+      - name: id_order
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/orders/{id_order}/tasks:
+    get:
+      tags:
+      - Client
+      summary: Tasks List
+      operationId: TasksList
+      parameters:
+      - name: id_order
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/history:
+    get:
+      tags:
+      - Client
+      summary: History Orders
+      operationId: HistoryOrders
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/orders/report:
+    post:
+      tags:
+      - Client
+      summary: Report Violation
+      operationId: ReportViolation
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportViolationRequest'
+            example:
+              id_order: ODGMRiPa9I
+              title: FREELANCER MELAKUKAN PENCURIAN
+              desc: PADA SAAT SAYA PERGI KELUAR FREELANCER TIBA TIBA HILANG MEMBAWA
+                BARANG BERHARGA SAYA
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/freelance/{id_freelance}/order:
+    post:
+      tags:
+      - Client
+      summary: Submit Order
+      operationId: SubmitOrder
+      parameters:
+      - name: id_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitOrderRequest'
+            example:
+              job_description: hubla
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/orders/{id_order}/cancel:
+    patch:
+      tags:
+      - Client
+      summary: Cancel Order
+      operationId: CancelOrder
+      parameters:
+      - name: id_order
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelOrderRequest'
+            example:
+              id_order: ODJuI7B5gv
+              title: FREELANCER MELAKUKAN PENCURIAN
+              desc: PADA SAAT SAYA PERGI KELUAR FREELANCER TIBA TIBA HILANG MEMBAWA
+                BARANG BERHARGA SAYA
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/orders/{id_order}/confirm:
+    patch:
+      tags:
+      - Client
+      summary: Confirm Order
+      operationId: ConfirmOrder
+      parameters:
+      - name: id_order
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/orders/{id_order}/finish:
+    patch:
+      tags:
+      - Client
+      summary: Finish Order
+      operationId: FinishOrder
+      parameters:
+      - name: id_order
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /client/orders/payment:
+    put:
+      tags:
+      - Client
+      summary: Order Payment
+      operationId: OrderPayment
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+            example:
+              id_method: 1
+              id_order: ODGMRiPa9I
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Client
+  /freelancer/offerings:
+    get:
+      tags:
+      - Freelancer
+      summary: Offering List
+      operationId: OfferingList
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/history:
+    get:
+      tags:
+      - Freelancer
+      summary: Offering History
+      operationId: OfferingHistory
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/me:
+    get:
+      tags:
+      - Freelancer
+      summary: Freelance Self Data
+      operationId: FreelanceSelfData
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/me/update-address:
+    patch:
+      tags:
+      - Freelancer
+      summary: Update Address
+      operationId: UpdateAddress
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAddressRequest'
+            example:
+              address: Dimana mana hatiku senang
+              address_long: 103.1548956
+              address_lat: 25.12845
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}:
+    get:
+      tags:
+      - Freelancer
+      summary: Offering Detail
+      operationId: OfferingDetail
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}/coordinate-both:
+    get:
+      tags:
+      - Freelancer
+      summary: Get Coordinate
+      operationId: GetCoordinate
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}/status:
+    get:
+      tags:
+      - Freelancer
+      summary: Refresh Status
+      operationId: RefreshStatus
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}/arrangement:
+    get:
+      tags:
+      - Freelancer
+      summary: Get Arrangement
+      operationId: GetArrangement
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+    post:
+      tags:
+      - Freelancer
+      summary: Arrange Offering
+      operationId: ArrangeOffering
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArrangeOfferingRequest'
+            example:
+              biaya: 250000
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}/arrangement/task/{id_task}:
+    delete:
+      tags:
+      - Freelancer
+      summary: Delete Task
+      operationId: DeleteTask
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id_task
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}/arrangement/task:
+    post:
+      tags:
+      - Freelancer
+      summary: Add Task
+      operationId: AddTask
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTaskRequest'
+            example:
+              task: Membangun atap rumah
+        required: true
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}/confirm:
+    patch:
+      tags:
+      - Freelancer
+      summary: Confirm Offering
+      operationId: ConfirmOffering
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+  /freelancer/offerings/{Id_Order_freelance}/reject:
+    patch:
+      tags:
+      - Freelancer
+      summary: Reject Offering
+      operationId: RejectOffering
+      parameters:
+      - name: Id_Order_freelance
+        in: path
+        description: ""
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+      deprecated: false
+      security:
+      - bearer: []
+      x-swagger-router-controller: Freelancer
+components:
+  schemas:
+    LoginClientRequest:
+      title: LoginClientRequest
+      required:
+      - email
+      - password
+      - role
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+      example:
+        email: hasanah.rini@gmail.co.id
+        password: password
+        role: client
+    Sign-UpClientRequest:
+      title: Sign-UpClientRequest
+      required:
+      - alamat
+      - email
+      - jenis_kelamin
+      - latitude
+      - longitude
+      - nama
+      - nik
+      - no_wa
+      - password
+      - role
+      type: object
+      properties:
+        nik:
+          type: string
+        nama:
+          type: string
+        alamat:
+          type: string
+        jenis_kelamin:
+          type: string
+        no_wa:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+      example:
+        nik: "123456789"
+        nama: Kerjamin-user
+        alamat: "Jalan kemana saja, Indonesia"
+        jenis_kelamin: Pria
+        no_wa: "0123456789"
+        email: emailBelumAda@gmail.com
+        password: password
+        role: CL
+        latitude: "3.1549872"
+        longitude: "-5.1248"
+    ReportViolationRequest:
+      title: ReportViolationRequest
+      required:
+      - desc
+      - id_order
+      - title
+      type: object
+      properties:
+        id_order:
+          type: string
+        title:
+          type: string
+        desc:
+          type: string
+      example:
+        id_order: ODGMRiPa9I
+        title: FREELANCER MELAKUKAN PENCURIAN
+        desc: PADA SAAT SAYA PERGI KELUAR FREELANCER TIBA TIBA HILANG MEMBAWA BARANG
+          BERHARGA SAYA
+    SubmitOrderRequest:
+      title: SubmitOrderRequest
+      required:
+      - job_description
+      type: object
+      properties:
+        job_description:
+          type: string
+      example:
+        job_description: hubla
+    CancelOrderRequest:
+      title: CancelOrderRequest
+      required:
+      - desc
+      - id_order
+      - title
+      type: object
+      properties:
+        id_order:
+          type: string
+        title:
+          type: string
+        desc:
+          type: string
+      example:
+        id_order: ODJuI7B5gv
+        title: FREELANCER MELAKUKAN PENCURIAN
+        desc: PADA SAAT SAYA PERGI KELUAR FREELANCER TIBA TIBA HILANG MEMBAWA BARANG
+          BERHARGA SAYA
+    OrderPaymentRequest:
+      title: OrderPaymentRequest
+      required:
+      - id_method
+      - id_order
+      type: object
+      properties:
+        id_method:
+          type: integer
+          format: int32
+        id_order:
+          type: string
+      example:
+        id_method: 1
+        id_order: ODGMRiPa9I
+    UpdateAddressRequest:
+      title: UpdateAddressRequest
+      required:
+      - address
+      - address_lat
+      - address_long
+      type: object
+      properties:
+        address:
+          type: string
+        address_long:
+          type: number
+        address_lat:
+          type: number
+      example:
+        address: Dimana mana hatiku senang
+        address_long: 103.1548956
+        address_lat: 25.12845
+    ArrangeOfferingRequest:
+      title: ArrangeOfferingRequest
+      required:
+      - biaya
+      type: object
+      properties:
+        biaya:
+          type: integer
+          format: int32
+      example:
+        biaya: 250000
+    AddTaskRequest:
+      title: AddTaskRequest
+      required:
+      - task
+      type: object
+      properties:
+        task:
+          type: string
+      example:
+        task: Membangun atap rumah
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
