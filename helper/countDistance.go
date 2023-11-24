@@ -9,8 +9,8 @@ import (
 	"os"
 )
 
+//receive message-> update
 func CountDistance(originLat float64, originLong float64, destinationLat float64, destinationLong float64) (*model.DistanceMatrixResponse, error) {
-
 	url := `https://maps.googleapis.com/maps/api/distancematrix/json?origins=` + fmt.Sprintf("%f", originLat) + `,` + fmt.Sprintf("%f", originLong) + `&destinations=` + fmt.Sprintf("%f", destinationLat) + `,` + fmt.Sprintf("%f", destinationLong) + `&key=` + os.Getenv("API_KEY")
 
 	var output model.DistanceMatrixResponse

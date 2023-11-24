@@ -56,7 +56,7 @@ func CountDistanceMapsApi(c echo.Context, o schema.Coordinates, d []schema.RoomC
 }
 
 // UpdateMicroController Post location, room, desired temp, desired radius
-//
+// mqtt
 func UpdateMicroController(c echo.Context) error {
 
 	userID := c.QueryParam("id")

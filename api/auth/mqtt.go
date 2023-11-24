@@ -9,16 +9,15 @@ import (
 	"log"
 )
 
-//for publish
+// for publish
 const (
 	projectID = "delta-coil-393803"
 	topicID   = "smart-room-pub-sub"
 )
 
-//
-//PublishMessage zpublish message to microcontroller
+// PublishMessage zpublish message to microcontroller
 func PublishMessage(ctx context.Context, data string) {
-	client, err := pubsub.NewClient(ctx, projectID, option.WithCredentialsFile("./delta-coil-393803-555a240284e0.json"))
+	client, err := pubsub.NewClient(ctx, projectID, option.WithCredentialsFile("./creds.json"))
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
@@ -33,10 +32,10 @@ func PublishMessage(ctx context.Context, data string) {
 	fmt.Println("Message published successfully.")
 }
 
-//ReceiveMessage yang dikirim dari microcontroller apa aja?
-//location id
-//if there's a person
-//room temp
+// ReceiveMessage yang dikirim dari microcontroller apa aja?
+// location id
+// if there's a person
+// room temp
 func ReceiveMessage(ctx context.Context, client *pubsub.Client, subscriptionID string) {
 	sub := client.Subscription(subscriptionID)
 	var response schema.RoomUpdate
@@ -45,7 +44,7 @@ func ReceiveMessage(ctx context.Context, client *pubsub.Client, subscriptionID s
 		fmt.Printf("Received message: %s\n", msg.Data)
 		_, err := fmt.Sscanf(string(msg.Data), "%d %f %d", &response.RoomId, &response.Temperature, &response.PersonCount)
 		if err != nil {
-			fmt.Println("Error parsing:", err)
+			fmt.Println("Invalid format", err)
 			return
 		}
 		msg.Ack()
