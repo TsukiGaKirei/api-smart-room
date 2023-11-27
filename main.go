@@ -5,18 +5,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"google.golang.org/api/option"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
+	"google.golang.org/api/option"
+	"gorm.io/gorm"
+
 	"api-smart-room/database"
 	"api-smart-room/routes"
+
 	"cloud.google.com/go/pubsub"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -148,22 +151,46 @@ func initSubscriber(ctx context.Context, projectID, subscriptionID, credsPath st
 	return client, subscription, nil
 }
 
-// Handle Pub/Sub messages
+// Handle Pub/Sub messages// Handle Pub/Sub messages
 func handlePubSubMessage(ctx context.Context, msg *pubsub.Message) {
+	// Decode the message data
 	data := string(msg.Data)
 
-	// Try to parse the data as a number
-	if num, err := strconv.ParseFloat(data, 64); err == nil {
-		log.Printf("Received a number: %f\n", num)
-		// Handle the number case
-		// ...
+	// Split the message into parts using a comma as the delimiter
+	parts := strings.Split(data, ",")
+
+	// Ensure that there are three parts in the message
+	if len(parts) != 3 {
+		log.Printf("Invalid message format: %s\n", data)
 		return
-	} else {
-		log.Printf("Error contain non number variable", data)
 	}
 
-	// If parsing as a number failed, treat it as a string
+	// Parse each part into the respective variables
+	RID, err := strconv.Atoi(parts[0])
+	if err != nil {
+		log.Printf("Error parsing RID: %v\n", err)
+		return
+	}
 
+	RoomTemp, err := strconv.ParseFloat(parts[1], 64)
+	if err != nil {
+		log.Printf("Error parsing RoomTemp: %v\n", err)
+		return
+	}
+
+	CountPerson, err := strconv.Atoi(parts[2])
+	if err != nil {
+		log.Printf("Error parsing CountPerson: %v\n", err)
+		return
+	}
+
+	// Now you have RID, RoomTemp, and CountPerson as variables
+	log.Printf("RID: %d, RoomTemp: %f, CountPerson: %d\n", RID, RoomTemp, CountPerson)
+	db := database.GetDBInstance()
+	if err = db.Raw(`update rooms set `, RID, RoomTemp, CountPerson).Error; err != nil {
+		log.Printf("Error post to database: %v\n", err)
+		return
+	}
 }
 
 // Get the port from the environment variable or use the default
