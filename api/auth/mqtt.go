@@ -1,55 +1,39 @@
 package auth
 
 import (
-	"api-smart-room/schema"
-	"cloud.google.com/go/pubsub"
-	"context"
 	"fmt"
-	"google.golang.org/api/option"
 	"log"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 // for publish
 const (
-	projectID = "delta-coil-393803"
-	topicID   = "smart-room-pub-sub"
+	mqttBrokerHost     = "34.101.160.103"
+	mqttBrokerPort     = 1883
+	mqttBrokerUsername = "user1"
+	mqttBrokerPassword = "qweasd123"
+	mqttTopic          = "api-topic"
 )
 
-// PublishMessage zpublish message to microcontroller
-func PublishMessage(ctx context.Context, data string) {
-	client, err := pubsub.NewClient(ctx, projectID, option.WithCredentialsFile("./creds.json"))
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
-	}
-	topic := client.Topic(topicID)
-	result := topic.Publish(ctx, &pubsub.Message{
-		Data: []byte(data),
-	})
-	_, err = result.Get(ctx)
-	if err != nil {
-		log.Fatalf("Failed to publish message: %v", err)
-	}
-	fmt.Println("Message published successfully.")
-}
+// PublishMessage publishes a message to the MQTT broker
+func PublishMessage(data string) {
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", mqttBrokerHost, mqttBrokerPort))
+	opts.SetUsername(mqttBrokerUsername)
+	opts.SetPassword(mqttBrokerPassword)
 
-// ReceiveMessage yang dikirim dari microcontroller apa aja?
-// location id
-// if there's a person
-// room temp
-func ReceiveMessage(ctx context.Context, client *pubsub.Client, subscriptionID string) {
-	sub := client.Subscription(subscriptionID)
-	var response schema.RoomUpdate
-	// Receive messages in a loop (this is a simple example)
-	err := sub.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
-		fmt.Printf("Received message: %s\n", msg.Data)
-		_, err := fmt.Sscanf(string(msg.Data), "%d %f %d", &response.RoomId, &response.Temperature, &response.PersonCount)
-		if err != nil {
-			fmt.Println("Invalid format", err)
-			return
-		}
-		msg.Ack()
-	})
-	if err != nil {
-		log.Fatalf("Failed to receive messages: %v", err)
+	client := mqtt.NewClient(opts)
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		log.Fatalf("Error connecting to MQTT broker: %v", token.Error())
 	}
+	defer client.Disconnect(0)
+
+	token := client.Publish(mqttTopic, 0, false, data)
+	token.Wait()
+	if token.Error() != nil {
+		log.Fatalf("Failed to publish message: %v", token.Error())
+	}
+
+	fmt.Println("Message published successfully.")
 }

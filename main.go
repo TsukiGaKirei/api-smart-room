@@ -1,7 +1,6 @@
 package main
 
 import (
-	"api-smart-room/static"
 	"context"
 	"errors"
 	"fmt"
@@ -14,22 +13,23 @@ import (
 	"syscall"
 	"time"
 
-	"google.golang.org/api/option"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/go-playground/validator/v10"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 
 	"api-smart-room/database"
 	"api-smart-room/routes"
-
-	"cloud.google.com/go/pubsub"
-	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
+	"api-smart-room/static"
 )
 
-// Constants for Pub/Sub
+// Constants for MQTT
 const (
-	projectID      = "smart-room-final-project"
-	topicID        = "microcontroller-topic"
-	subscriptionID = "api-sub"
+	mqttBrokerHost     = "34.101.160.103"
+	mqttBrokerPort     = 1883
+	mqttBrokerUsername = "user1"
+	mqttBrokerPassword = "qweasd123"
+	mqttTopic          = "microcontroller-topic"
 )
 
 func main() {
@@ -43,23 +43,23 @@ func main() {
 	// Custom error message handling
 	e.HTTPErrorHandler = customHTTPErrorHandler
 
-	// Set up Pub/Sub subscriber
-	ctx := context.Background()
-	client, subscription, err := initSubscriber(ctx, projectID, subscriptionID, "./creds.json", handlePubSubMessage, e)
-	if err != nil {
-		log.Fatalf("Error setting up Pub/Sub subscriber: %v", err)
+	// Initialize the MQTT client
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", mqttBrokerHost, mqttBrokerPort))
+	opts.SetClientID("your-client-id") // Set a unique client ID
+
+	opts.SetUsername(mqttBrokerUsername)
+	opts.SetPassword(mqttBrokerPassword)
+
+	client := mqtt.NewClient(opts)
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		log.Fatalf("Error connecting to MQTT broker: %v", token.Error())
 	}
 
-	// Start Pub/Sub subscriber in a separate goroutine
-	go func() {
-		err := subscription.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
-			handlePubSubMessage(ctx, msg)
-			msg.Ack()
-		})
-		if err != nil {
-			log.Fatalf("Error receiving Pub/Sub messages: %v", err)
-		}
-	}()
+	// Subscribe to the MQTT topic
+	if token := client.Subscribe(mqttTopic, 0, handleMQTTMessage); token.Wait() && token.Error() != nil {
+		log.Fatalf("Error subscribing to MQTT topic: %v", token.Error())
+	}
 
 	// Start HTTP server
 	port := getPort()
@@ -81,13 +81,14 @@ func main() {
 		e.Logger.Fatal(err)
 	}
 
-	// Close Pub/Sub client when shutting down
-	if err := client.Close(); err != nil {
-		log.Fatal(err)
+	// Unsubscribe and disconnect from MQTT broker
+	if token := client.Unsubscribe(mqttTopic); token.Wait() && token.Error() != nil {
+		log.Fatal("Error unsubscribing from MQTT topic:", token.Error())
 	}
+
+	client.Disconnect(0)
 }
 
-// Custom error handling for HTTP errors
 // Custom error handling for HTTP errors
 func customHTTPErrorHandler(err error, c echo.Context) {
 	report, ok := err.(*echo.HTTPError)
@@ -137,24 +138,10 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return cv.validator.Struct(i)
 }
 
-// Initialize Pub/Sub subscriber
-func initSubscriber(ctx context.Context, projectID, subscriptionID, credsPath string, handlerFunc func(context.Context, *pubsub.Message), e *echo.Echo) (*pubsub.Client, *pubsub.Subscription, error) {
-	client, err := pubsub.NewClient(ctx, projectID, option.WithCredentialsFile("./creds.json"))
-	if err != nil {
-		return nil, nil, fmt.Errorf("Error creating Pub/Sub client: %v", err)
-	}
-
-	subscription := client.Subscription(subscriptionID)
-	subscription.ReceiveSettings.MaxOutstandingMessages = 10
-	subscription.ReceiveSettings.NumGoroutines = 10
-
-	return client, subscription, nil
-}
-
-// Handle Pub/Sub messages// Handle Pub/Sub messages
-func handlePubSubMessage(ctx context.Context, msg *pubsub.Message) {
+// Handle MQTT messages
+func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 	// Decode the message data
-	data := string(msg.Data)
+	data := string(msg.Payload())
 
 	// Split the message into parts using a comma as the delimiter
 	parts := strings.Split(data, ",")
