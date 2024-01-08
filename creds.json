@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "smart-room-final-project",
+  "private_key_id": "6b380ad07fa8b497ce83be90c657f121a6f707f2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCboG8oNR3m3rzV\nIMzshsFCmjiG+f3xo2HaiCuNhM4/0eCUyAnNNLbSfcnGyG2ArMMkhwv8FMnSBUQR\ndmUJR/k+Gtyox1wcH4IDpVUfmBHZpiSIzyT5MbUsPDqQPPNFce/xWRFCyi9OU/Aq\nf14iISE58oJ0fibzrFYQZqYtoecrYbyvtV20vWje1QaRVSJflZR7Cm3U/nhKKCH7\n6QV6g46AOecMlQbgIGEx2IIhyXZFjGCkA/9bv9k5kB74o6gWT2v/RK5UPEH3RbkD\nWubH2cO+Osfp6NJ4gswS61OPH1b4ctP4fXm5UKx/G6uz7u6VuMP0U87bEDf2pyaN\nRPkqgPltAgMBAAECggEAD/CuMgIZc/ebLoFTkWPOu7xWzzcf6aDVzwUPi56aDt4N\nEMWEgNObaOf1bjpCl7bFA3ge+XeaTGa5rXLhBRhYJneojlO30txEpuGdBxq+XqVZ\nLKIlpAM8DrHZ6xgzGrPW4x4/rwWiiXVTg3wpmiP75pbjrHxCD8dhHADyQyOdgqCG\ni6Xo5/Oa9XJ/dcmQRKQYCzqT4Mwbg495WYFiFvSteZgsdfG50tRDZ0DJe85WegO4\nx8IF7SKwxkrXnRzXK4+ZjNMaa9h74SFQhZtFqNKg44FU7+/9ufYeXb9uKWyIaVHU\n9f0bXVIweWmwkV3dOT2ct4jJWlggi8Lmxo1FFoZfSQKBgQDTmS6xRCgSEn3TF97w\ncqfAdExBUPWZ1gXRJ7NijfZ+LtPb+eMAo7Ssk1mJ14C3CzcGDHrpgLv3q9kb2JXB\nR8dJdIlVPc/3tGVQ9ierzN0HNplhEik5KeknqykhPITXixOcno+ku/icROyEWJ/D\nOht6lYdfRNTg8rp+dynVkO6Q2wKBgQC8SITSZ2k3139P1l/4yefTzESgrdVLyr5J\nRBM6HGvxzFB7KlvLBsWFjR+tCUfFI2sWRUGhAsf1cu6YCeRl3QuWo8aJw886QiuG\nHn8mlhdxeKwjsux16veZU0Yt0LvV7WAYapre8JKMNnDGeWU9pZfsc1xOHEO4s2aF\ngR3FguntVwKBgQCtd7QWsPhksHIkfzpORsCNfwoQte1Sm2mTaQefsSA1m/AlM3vM\nx2hT3kyWO2yTIweN1udgzB/M0D4hnPJQTKbs6jO4BP+cY3B36gTlzAIbasBdGwVe\njqRM1/3U+IczKRn/2OGLvGn4umxnpzv6UYW7fiBHkucuLu+Cw/Aw3Csn5wKBgA7O\nnTN20n2Dww1iTJXiOwsbC2KfiSC2xxQ3+FMfnRWc/c9R23oyBCKmoJEZI73LNUbB\nF5I0B8mzyjPGw2GHarvkEV8QOSHZxlZ724ALWbigxtjf31y+p841EFXWDo+aZW5G\nI/vYa43/UgspzN52QWZlBCNYcbL62Nsy9kZsLz1tAoGAR/m4mcmdhEoEu0md0tfu\n0OR0CXRpYnPlEb4rktP64d/vFCZ4JHqAObfpVG9VT6FKRmOA5m5NdBNyeU9YR0nJ\nOf7pAUulhKZAaIez1XcD47phxRm/SmbtfCRafVLOi+K3TBXrvZqHbPuZlRCb2klf\nvpFRGfmthM8Si3q1ohS96gQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "pub-sub-smart-room@smart-room-final-project.iam.gserviceaccount.com",
+  "client_id": "116029082083602037912",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pub-sub-smart-room%40smart-room-final-project.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -9,11 +9,10 @@ import (
 )
 
 type PostgresCredential struct {
-	DBUsername             string
-	DBPassword             string
-	DBName                 string
-	DBHost                 string
-	InstanceConnectionName string
+	DBUsername string
+	DBPassword string
+	DBName     string
+	DBHost     string
 }
 
 func GetPostgresCredential() PostgresCredential {
@@ -24,11 +23,10 @@ func GetPostgresCredential() PostgresCredential {
 	}
 
 	return PostgresCredential{
-		DBUsername:             os.Getenv("DB_USERNAME"),
-		DBPassword:             os.Getenv("DB_PASSWORD"),
-		DBName:                 os.Getenv("DB_DATABASE"),
-		DBHost:                 os.Getenv("DB_HOST"),
-		InstanceConnectionName: os.Getenv("CLOUD_SQL_CONNECTION_NAME"),
+		DBUsername: os.Getenv("DB_USERNAME"),
+		DBPassword: os.Getenv("DB_PASSWORD"),
+		DBName:     os.Getenv("DB_DATABASE"),
+		DBHost:     os.Getenv("DB_HOST"),
 	}
 }
 

@@ -48,23 +48,3 @@ func (u *User) HaveRole(roleId string) bool {
 
 	return x.IdRole != ""
 }
-
-func (u *User) FindFreelanceAcc() (*FreelanceData, error) {
-	db := database.GetDBInstance()
-	var fr FreelanceData
-	if err := db.First(&fr, "id_user = ?", u.IdUser).Error; err != nil {
-		return nil, err
-	}
-
-	return &fr, nil
-}
-
-func (u *User) FindClientAcc() (*ClientData, error) {
-	db := database.GetDBInstance()
-	var cl ClientData
-	if err := db.First(&cl, "id_user = ?", u.IdUser).Error; err != nil {
-		return nil, err
-	}
-
-	return &cl, nil
-}

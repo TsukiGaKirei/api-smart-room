@@ -1,10 +1,9 @@
 package routes
 
 import (
-	customMiddleware "api-smart-room/middleware"
 	authRoute "api-smart-room/routes/auth"
-	clientRoute "api-smart-room/routes/client"
-	freelanceRoute "api-smart-room/routes/freelance"
+	// clientRoute "api-smart-room/routes/client"
+	// freelanceRoute "api-smart-room/routes/freelance"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -28,14 +27,14 @@ func Init() *echo.Echo {
 	authRoute.AuthSubRoute(authGroup)
 
 	// Group Client
-	clientGroup := e.Group(API_ROUTE+"client", customMiddleware.IsAuthenticated)
-	clientGroup.Use(customMiddleware.CheckRole("client"))
-	clientRoute.ClientSubRoute(clientGroup)
+	// clientGroup := e.Group(API_ROUTE+"client", customMiddleware.IsAuthenticated)
+	// clientGroup.Use(customMiddleware.CheckRole("client"))
+	// clientRoute.ClientSubRoute(clientGroup)
 
 	// Freelance Group
-	freelanceGroup := e.Group(API_ROUTE+"freelancer", customMiddleware.IsAuthenticated)
-	freelanceGroup.Use(customMiddleware.CheckRole("freelancer"))
-	freelanceRoute.FreelanceSubRoute(freelanceGroup)
+	// freelanceGroup := e.Group(API_ROUTE+"freelancer", customMiddleware.IsAuthenticated)
+	// freelanceGroup.Use(customMiddleware.CheckRole("freelancer"))
+	// freelanceRoute.FreelanceSubRoute(freelanceGroup)
 
 	return e
 }
