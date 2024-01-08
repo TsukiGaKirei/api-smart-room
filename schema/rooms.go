@@ -21,8 +21,8 @@ type Rooms struct {
 }
 
 type UserRoom struct {
-	UID         int       `json:"uid"`
-	RID         int       `json:"rid"`
+	Uid         int       `json:"uid"`
+	Rid         int       `json:"rid"`
 	Distance    int       `json:"distance"`
 	LastUpdated time.Time `json:"last_updated"`
 }

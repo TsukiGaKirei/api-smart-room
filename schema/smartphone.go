@@ -9,14 +9,14 @@ type Preference struct {
 }
 
 type LocationUpdate struct {
-	UID       string `json:"uid"`
-	Longitude string `json:"longitude"`
-	Latitude  string `json:"latitude"`
+	UID       int     `json:"uid"`
+	Longitude float32 `json:"longitude"`
+	Latitude  float32 `json:"latitude"`
 }
 
 type OpenDoor struct {
-	UID    string `json:"uid"`
-	Radius int    `json:"radius"`
+	UID    int `json:"uid"`
+	Radius int `json:"radius"`
 }
 
 type UserConfig struct {

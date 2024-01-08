@@ -5,6 +5,7 @@ import (
 	"api-smart-room/schema"
 	"api-smart-room/static"
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"net/http"
@@ -17,9 +18,7 @@ func UpdateLocation(c echo.Context) error {
 	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
 		return echo.ErrBadRequest
 	}
-	postLong, _ := strconv.ParseFloat(payload.Longitude, 64)
-	postLat, _ := strconv.ParseFloat(payload.Latitude, 64)
-	postId, _ := strconv.ParseInt(payload.UID, 4, 4)
+
 	const updateSql = `
 	UPDATE users
 	SET longitude=?, latitude=?
@@ -27,14 +26,22 @@ func UpdateLocation(c echo.Context) error {
 `
 
 	db := database.GetDBInstance()
-	err := db.Exec(updateSql, postLong, postLat, postId)
-	if err == nil {
+	err := db.Exec(updateSql, payload.Longitude, payload.Latitude, payload.UID).Error
+	if err != nil {
+		fmt.Println(err)
 		return echo.ErrInternalServerError
 	}
+
 	var UserCoordinates schema.UserCoordinates
-	UserCoordinates.UID = int(postId)
-	UserCoordinates.Latitude = float32(postLat)
-	UserCoordinates.Longitude = float32(postLong)
+
+	err = db.Raw(`select u.uid , u.latitude ,u.longitude ,u.desired_radius ,u.threshold , u.desired_temp 
+	from users u 
+	where u.uid =?`, payload.UID).Scan(&UserCoordinates).Error
+	if err != nil {
+		fmt.Println(err)
+
+		return echo.ErrInternalServerError
+	}
 	CountDistanceMapsApi(c, UserCoordinates)
 
 	res := static.ResponseSuccess{
@@ -50,20 +57,27 @@ func OpenDoor(c echo.Context) error {
 	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
 		return echo.ErrBadRequest
 	}
+	if payload.Radius == 0 && payload.UID == 0 {
+		return echo.ErrBadRequest
+	}
+
 	var userRoom []schema.UserRoom
-	postId, _ := strconv.ParseInt(payload.UID, 4, 4)
 	const getRoomInsideRadius = `
-	select * from users_rooms ur where ur.uid =? and distance <=?
+	select ur.uid,ur.rid,ur.distance,ur.last_updated from users_rooms ur where ur.uid =? and distance <=?
 `
 
 	db := database.GetDBInstance()
-	if err := db.Raw(getRoomInsideRadius, postId).Scan(&userRoom).Error; err == nil {
+	if err := db.Raw(getRoomInsideRadius, payload.UID, payload.Radius).Scan(&userRoom).Error; err != nil {
+		fmt.Println(err)
 		return echo.ErrInternalServerError
 	}
+	fmt.Println(userRoom)
+
 	for _, room := range userRoom {
 
 		if room.Distance <= payload.Radius {
-			PublishMessage(strconv.Itoa(room.RID) + " open_door")
+			PublishMessage(strconv.Itoa(room.Rid) + " open_door")
+			fmt.Println("Message published room -> " + strconv.Itoa(room.Rid) + " open_door")
 		}
 	}
 	res := static.ResponseSuccess{
@@ -80,19 +94,29 @@ func UpdateConfiguration(c echo.Context) error {
 		return echo.ErrBadRequest
 	}
 	var userRoom []schema.UserRoom
-
+	var rid []int
 	const updateRoomConfiguration = `
-	update users set threshold=?,desired_temp = ?, desired_radius = ?, smart_room_automation=? where uid = ?
+	update users set threshold=?,desired_temp = ?, desired_radius = ?, smart_room_automation=? where uid = ?;
 `
+	const selectUserRoom = `	
+select ur.rid  
+from users_rooms ur , rooms r, users u 
+where ur.uid =? and  ur.rid =r.rid and u.uid = ur.uid and ur.distance <= u.desired_radius  and r.ac =true
+	`
 	//get activated room where the user is registred and online
 	db := database.GetDBInstance()
-	if err := db.Raw(updateRoomConfiguration, payload.DesiredThreshold, payload.DesiredTemp, payload.DesiredRadius, payload.SmartRoomAutomation, payload.UID).Scan(&userRoom).Error; err == nil {
+	if err := db.Raw(updateRoomConfiguration, payload.DesiredThreshold, payload.DesiredTemp, payload.DesiredRadius, payload.SmartRoomAutomation, payload.UID).Scan(&userRoom).Error; err != nil {
+		fmt.Println(err)
 		return echo.ErrInternalServerError
 	}
-
+	if err := db.Raw(selectUserRoom, payload.UID).Scan(&rid).Error; err != nil {
+		fmt.Println(err)
+		return echo.ErrInternalServerError
+	}
+	fmt.Println(rid)
 	res := static.ResponseSuccess{
 		Error: false,
-		Data:  "Door Opened"}
+		Data:  "Configuration Updated"}
 
 	return c.JSON(http.StatusCreated, res)
 }
