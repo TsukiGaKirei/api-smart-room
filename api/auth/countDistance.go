@@ -74,7 +74,7 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 				row.AC = false
 				row.Threshold = 0
 
-				PublishMessage(strconv.Itoa(row.Rid) + " ac_off")
+				PublishMessage(strconv.Itoa(row.Rid) + ";ac_off")
 				if err := db.Exec("update rooms set ac = false where rid = ?; ", row.Rid).Error; err != nil {
 					fmt.Println(err)
 					return echo.ErrInternalServerError
@@ -87,7 +87,7 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 			if row.Threshold >= float32(o.Threshold) {
 				row.AC = true
 				row.Threshold = 0
-				PublishMessage(strconv.Itoa(row.Rid) + " ac_on " + strconv.Itoa(o.DesiredTemp))
+				PublishMessage(strconv.Itoa(row.Rid) + ";ac_on;" + strconv.Itoa(o.DesiredTemp))
 				if err := db.Exec("update rooms set ac = false  where rid = ?; ", row.Rid).Error; err != nil {
 					fmt.Println(err)
 					return echo.ErrInternalServerError

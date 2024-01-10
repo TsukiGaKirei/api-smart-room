@@ -29,7 +29,7 @@ const (
 	mqttBrokerPort     = 1883
 	mqttBrokerUsername = "user1"
 	mqttBrokerPassword = "qweasd123"
-	mqttTopic          = "microcontroller-topic"
+	mqttTopic          = "esp32-topic"
 )
 
 func main() {
@@ -144,10 +144,10 @@ func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 	data := string(msg.Payload())
 
 	// Split the message into parts using a comma as the delimiter
-	parts := strings.Split(data, ",")
+	parts := strings.Split(data, ";")
 
 	// Ensure that there are three parts in the message
-	if len(parts) != 3 {
+	if len(parts) != 2 {
 		log.Printf("Invalid message format: %s\n", data)
 		return
 	}
@@ -159,22 +159,16 @@ func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 		return
 	}
 
-	RoomTemp, err := strconv.ParseFloat(parts[1], 64)
-	if err != nil {
-		log.Printf("Error parsing RoomTemp: %v\n", err)
-		return
-	}
-
-	CountPerson, err := strconv.Atoi(parts[2])
+	CountPerson, err := strconv.Atoi(parts[1])
 	if err != nil {
 		log.Printf("Error parsing CountPerson: %v\n", err)
 		return
 	}
 
 	// Now you have RID, RoomTemp, and CountPerson as variables
-	log.Printf("RID: %d, RoomTemp: %f, CountPerson: %d\n", RID, RoomTemp, CountPerson)
+	log.Printf("RID: %d, CountPerson: %d\n", RID, CountPerson)
 	db := database.GetDBInstance()
-	if err = db.Raw(`update rooms set `, RID, RoomTemp, CountPerson).Error; err != nil {
+	if err = db.Exec(`update rooms set count_person=? where rid=?`, CountPerson, RID).Error; err != nil {
 		log.Printf("Error post to database: %v\n", err)
 		return
 	}

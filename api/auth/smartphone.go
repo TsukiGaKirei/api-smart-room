@@ -76,8 +76,8 @@ func OpenDoor(c echo.Context) error {
 	for _, room := range userRoom {
 
 		if room.Distance <= payload.Radius {
-			PublishMessage(strconv.Itoa(room.Rid) + " open_door")
-			fmt.Println("Message published room -> " + strconv.Itoa(room.Rid) + " open_door")
+			PublishMessage(strconv.Itoa(room.Rid) + ";door_open")
+			fmt.Println("Message published room -> " + strconv.Itoa(room.Rid) + "open_door")
 		}
 	}
 	res := static.ResponseSuccess{
