@@ -25,7 +25,7 @@ import (
 
 // Constants for MQTT
 const (
-	mqttBrokerHost     = "34.101.160.103"
+	mqttBrokerHost     = "34.101.245.2"
 	mqttBrokerPort     = 1883
 	mqttBrokerUsername = "user1"
 	mqttBrokerPassword = "qweasd123"
