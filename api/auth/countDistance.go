@@ -64,8 +64,9 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 		return echo.ErrInternalServerError
 	}
 	// Extract distance 73
-	fmt.Println(url)
+
 	for i, row := range d {
+
 		row.Distance = apiResponse.Rows[0].Elements[i].Distance.Meters
 		if row.AC && row.Distance > o.DesiredRadius && row.CountPerson == 0 {
 			row.Threshold += float32(row.CurrentTime.Sub(*row.LastUpdated).Minutes())
@@ -87,6 +88,7 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 			if row.Threshold >= float32(o.Threshold) {
 				row.AC = true
 				row.Threshold = 0
+				fmt.Println("message send on " + strconv.Itoa(row.Rid) + ";ac_on;" + strconv.Itoa(o.DesiredTemp))
 				PublishMessage(strconv.Itoa(row.Rid) + ";ac_on;" + strconv.Itoa(o.DesiredTemp))
 				if err := db.Exec("update rooms set ac = true, ac_temp = ? where rid = ?; ", o.DesiredTemp, row.Rid).Error; err != nil {
 					fmt.Println(err)
