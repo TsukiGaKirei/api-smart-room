@@ -34,6 +34,7 @@ type UserWebView struct {
 	Name                string  `json:"name"`
 	DesiredRadius       float32 `json:"desired_radius"`
 	DesiredTemp         int     `json:"desired_temp"`
+	DesiredThreshold    int     `json:"desired_threshold"`
 	SmartRoomAutomation bool    `json:"smart_room_automation"`
 	LastUpdated         string  `json:"last_updated"`
 }
