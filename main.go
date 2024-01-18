@@ -146,6 +146,7 @@ func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 	if err := db.Exec(`insert into mqtt_log(topic,message,published_at) values(?,?,now())`, mqttTopic, data).Error; err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println(data)
 	// Split the message into parts using a comma as the delimiter
 	parts := strings.Split(data, ";")
 	var CountPerson int
@@ -163,7 +164,7 @@ func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 	}
 	if parts[1] != "door_open" && parts[1] != "door_close" {
 
-		if err = db.Exec(`update rooms set is_door_open=?, l where rid=?`, parts[1] == "door_open", RID).Error; err != nil {
+		if err = db.Exec(`update rooms set is_door_open=?, last_updated = now() where rid=?`, parts[1] == "door_open", RID).Error; err != nil {
 			log.Printf("Error post to database: %v\n", err)
 			return
 		}
@@ -173,7 +174,7 @@ func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 			log.Printf("Error parsing CountPerson: %v\n", err)
 			return
 		}
-		if err = db.Exec(`update rooms set count_person=?, lamp=? where rid=?`, CountPerson, parts[2], RID).Error; err != nil {
+		if err = db.Exec(`update rooms set count_person=?, lamp=? , last_updated = now() where rid=?`, CountPerson, parts[2], RID).Error; err != nil {
 			log.Printf("Error post to database: %v\n", err)
 			return
 		}

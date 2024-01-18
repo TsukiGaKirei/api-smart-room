@@ -1,7 +1,5 @@
 package schema
 
-import "time"
-
 type ResponseWebView struct {
 	UserRoomWebView []UserRoomWebView `json:"user_room_data"`
 	UserWebView     []UserWebView     `json:"user_data"`
@@ -40,8 +38,8 @@ type UserWebView struct {
 }
 
 type MqttLog struct {
-	Id          int       `json:"id"`
-	Topic       string    `json:"topic"`
-	Message     string    `json:"message"`
-	PublishedAt time.Time `json:"published_at"`
+	Id          int    `json:"id"`
+	Topic       string `json:"topic"`
+	Message     string `json:"message"`
+	PublishedAt string `json:"published_at"`
 }
