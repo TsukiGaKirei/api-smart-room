@@ -29,7 +29,7 @@ func GetDataAllRoom(c echo.Context) error {
 
 	if err := db.Raw(`select ml.id ,ml.topic ,ml.message ,ml.published_at 
 	from mqtt_log ml
-	order by ml.id desc
+	order by ml.id asc
 	`).Scan(&result.MqttLog).Error; err != nil {
 		return echo.ErrInternalServerError
 	}
