@@ -12,8 +12,6 @@ type ResponseWebView struct {
 type RoomsWebview struct {
 	Rid           int     `json:"rid"`
 	Name          string  `json:"name"`
-	Longitude     float32 `json:"longitude"`
-	Latitude      float32 `json:"latitude"`
 	Lamp          bool    `json:"lamp"`
 	Ac            bool    `json:"ac"`
 	AcTemp        int     `json:"ac_temp"`
@@ -34,8 +32,6 @@ type UserRoomWebView struct {
 type UserWebView struct {
 	UID                 int     `json:"uid"`
 	Name                string  `json:"name"`
-	Longitude           float32 `json:"longitude"`
-	Latitude            float32 `json:"latitude"`
 	DesiredRadius       float32 `json:"desired_radius"`
 	DesiredTemp         int     `json:"desired_temp"`
 	SmartRoomAutomation bool    `json:"smart_room_automation"`
