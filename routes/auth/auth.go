@@ -20,6 +20,7 @@ func AuthSubRoute(group *echo.Group) {
 	group.POST("/update-location", auth.UpdateLocation)
 	group.POST("/open-door", auth.OpenDoor)
 	group.POST("/update-configuration", auth.UpdateConfiguration)
+	group.GET("/webview/get", auth.GetDataAllRoom)
 	// microcontroller
 
 }

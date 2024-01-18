@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"api-smart-room/database"
 	"fmt"
 	"log"
 
@@ -33,6 +34,10 @@ func PublishMessage(data string) {
 	token.Wait()
 	if token.Error() != nil {
 		log.Fatalf("Failed to publish message: %v", token.Error())
+	}
+	db := database.GetDBInstance()
+	if err := db.Exec(`insert into mqtt_log(topic,message,published_at) values(?,?,now())`, mqttTopic, data).Error; err != nil {
+		fmt.Println(err)
 	}
 
 	fmt.Println("Message published successfully.")

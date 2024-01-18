@@ -27,7 +27,7 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 		fmt.Println(err)
 		return echo.ErrInternalServerError
 	}
-
+	fmt.Println("here fine")
 	originsCoordinate := fmt.Sprintf("%f%s%f", o.Latitude, "%2C", o.Longitude)
 	destinationCoordinate := fmt.Sprintf("%f%s%f", d[0].Latitude, "%2C", d[0].Longitude)
 
@@ -38,6 +38,7 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 		}
 	}
 	url := fmt.Sprintf(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=%s&destinations=%s&key=%s`, originsCoordinate, destinationCoordinate, os.Getenv("API_KEY"))
+	fmt.Println("also fine")
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -64,13 +65,17 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 		return echo.ErrInternalServerError
 	}
 	// Extract distance 73
-
+	fmt.Println(url)
+	fmt.Println("this url")
 	for i, row := range d {
 
 		row.Distance = apiResponse.Rows[0].Elements[i].Distance.Meters
 		if row.AC && row.Distance > o.DesiredRadius && row.CountPerson == 0 {
-			row.Threshold += float32(row.CurrentTime.Sub(*row.LastUpdated).Minutes())
 
+			row.Threshold += float32(row.CurrentTime.Sub(*row.LastUpdated).Minutes())
+			if float32(row.CurrentTime.Sub(*row.LastUpdated).Minutes()) >= 1 {
+				row.Threshold = 0
+			}
 			if row.Threshold >= float32(o.Threshold) {
 				row.AC = false
 				row.Threshold = 0
@@ -85,6 +90,9 @@ func CountDistanceMapsApi(c echo.Context, o schema.UserCoordinates) error {
 		} else if !row.AC && row.Distance <= o.DesiredRadius {
 
 			row.Threshold += float32(row.CurrentTime.Sub(*row.LastUpdated).Minutes())
+			if float32(row.CurrentTime.Sub(*row.LastUpdated).Minutes()) >= 1 {
+				row.Threshold = 0
+			}
 			if row.Threshold >= float32(o.Threshold) {
 				row.AC = true
 				row.Threshold = 0

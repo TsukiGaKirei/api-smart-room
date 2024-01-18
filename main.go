@@ -142,12 +142,15 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 	// Decode the message data
 	data := string(msg.Payload())
-
+	db := database.GetDBInstance()
+	if err := db.Exec(`insert into mqtt_log(topic,message,published_at) values(?,?,now())`, mqttTopic, data).Error; err != nil {
+		fmt.Println(err)
+	}
 	// Split the message into parts using a comma as the delimiter
 	parts := strings.Split(data, ";")
-
+	var CountPerson int
 	// Ensure that there are three parts in the message
-	if len(parts) != 2 {
+	if len(parts) > 3 {
 		log.Printf("Invalid message format: %s\n", data)
 		return
 	}
@@ -158,20 +161,25 @@ func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 		log.Printf("Error parsing RID: %v\n", err)
 		return
 	}
+	if parts[1] != "door_open" && parts[1] != "door_close" {
 
-	CountPerson, err := strconv.Atoi(parts[1])
-	if err != nil {
-		log.Printf("Error parsing CountPerson: %v\n", err)
-		return
+		if err = db.Exec(`update rooms set is_door_open=?, l where rid=?`, parts[1] == "door_open", RID).Error; err != nil {
+			log.Printf("Error post to database: %v\n", err)
+			return
+		}
+	} else {
+		CountPerson, err = strconv.Atoi(parts[1])
+		if err != nil {
+			log.Printf("Error parsing CountPerson: %v\n", err)
+			return
+		}
+		if err = db.Exec(`update rooms set count_person=?, lamp=? where rid=?`, CountPerson, parts[2], RID).Error; err != nil {
+			log.Printf("Error post to database: %v\n", err)
+			return
+		}
 	}
-
 	// Now you have RID, RoomTemp, and CountPerson as variables
-	log.Printf("RID: %d, CountPerson: %d\n", RID, CountPerson)
-	db := database.GetDBInstance()
-	if err = db.Exec(`update rooms set count_person=? where rid=?`, CountPerson, RID).Error; err != nil {
-		log.Printf("Error post to database: %v\n", err)
-		return
-	}
+
 }
 
 // Get the port from the environment variable or use the default
