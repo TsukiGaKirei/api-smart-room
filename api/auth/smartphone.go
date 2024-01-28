@@ -98,6 +98,7 @@ func UpdateConfiguration(c echo.Context) error {
 	const updateRoomConfiguration = `
 	update users set threshold=?,desired_temp = ?, desired_radius = ?, smart_room_automation=? where uid = ?;
 `
+
 	const selectUserRoom = `	
 select ur.rid  
 from users_rooms ur , rooms r, users u 
@@ -110,6 +111,13 @@ where ur.uid =? and  ur.rid =r.rid and u.uid = ur.uid and ur.distance <= u.desir
 		return echo.ErrInternalServerError
 	}
 	if err := db.Raw(selectUserRoom, payload.UID).Scan(&rid).Error; err != nil {
+		fmt.Println(err)
+		return echo.ErrInternalServerError
+	}
+	if err := db.Exec(`update rooms set ac_temp = ? where rid in(
+		select ur.rid  
+		from users_rooms ur , rooms r, users u 
+		where ur.uid =? and  ur.rid =r.rid and u.uid = ur.uid and ur.distance <= u.desired_radius  and r.ac =true)`, payload.DesiredTemp, payload.UID).Error; err != nil {
 		fmt.Println(err)
 		return echo.ErrInternalServerError
 	}
