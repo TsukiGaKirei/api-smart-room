@@ -141,12 +141,14 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 // Handle MQTT messages
 func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 	// Decode the message data
+	fmt.Println(msg)
+
 	data := string(msg.Payload())
+
 	db := database.GetDBInstance()
 	if err := db.Exec(`insert into mqtt_log(topic,message,published_at) values(?,?,now())`, mqttTopic, data).Error; err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(data)
 	// Split the message into parts using a comma as the delimiter
 	parts := strings.Split(data, ";")
 	var CountPerson int
@@ -162,7 +164,7 @@ func handleMQTTMessage(client mqtt.Client, msg mqtt.Message) {
 		log.Printf("Error parsing RID: %v\n", err)
 		return
 	}
-	if parts[1] != "door_open" && parts[1] != "door_close" {
+	if parts[1] == "door_open" || parts[1] == "door_close" {
 
 		if err = db.Exec(`update rooms set is_door_open=?, last_updated = now() where rid=?`, parts[1] == "door_open", RID).Error; err != nil {
 			log.Printf("Error post to database: %v\n", err)

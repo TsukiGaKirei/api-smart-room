@@ -11,7 +11,7 @@ import (
 func GetDataAllRoom(c echo.Context) error {
 	var result schema.ResponseWebView
 	db := database.GetDBInstance()
-	if err := db.Raw(`select r.rid ,r."name"  ,r.ac_temp , r.last_updated , r.ac, r.lamp ,r.door , r.last_updated_by 
+	if err := db.Raw(`select r.rid ,r."name"  ,r.ac_temp , r.last_updated , r.ac, r.lamp ,r.door , r.last_updated_by, r.count_person 
 	from rooms r order by r.rid`).Scan(&result.RoomsWebview).Error; err != nil {
 		return echo.ErrInternalServerError
 	}

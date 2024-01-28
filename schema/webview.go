@@ -17,6 +17,7 @@ type RoomsWebview struct {
 	LastUpdated   string  `json:"last_updated"`
 	LastUpdatedBy int     `json:"last_updated_by"`
 	Door          bool    `json:"door"`
+	CountPerson   int     `json:"count_person"`
 }
 
 type UserRoomWebView struct {
