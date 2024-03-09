@@ -121,6 +121,10 @@ where ur.uid =? and  ur.rid =r.rid and u.uid = ur.uid and ur.distance <= u.desir
 		fmt.Println(err)
 		return echo.ErrInternalServerError
 	}
+	for _, room := range rid {
+		PublishMessage(strconv.Itoa(room) + ";ac_on;" + strconv.Itoa(payload.DesiredTemp))
+		fmt.Println("Message published room -> " + strconv.Itoa(room) + "ac_temp;" + strconv.Itoa(payload.DesiredTemp))
+	}
 	fmt.Println(rid)
 	res := static.ResponseSuccess{
 		Error: false,
